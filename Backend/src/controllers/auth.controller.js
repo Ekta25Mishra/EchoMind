@@ -72,4 +72,19 @@ async function loginUser(req,res){
 
 }
 
-module.exports= {registerUser, loginUser}
+async function getMe(req, res) {
+  res.status(200).json({
+    user: {
+      email: req.user.email,
+      _id: req.user._id,
+      fullName: req.user.fullName
+    }
+  })
+}
+
+async function logoutUser(req, res) {
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logged out successfully" })
+}
+
+module.exports= {registerUser, loginUser, getMe, logoutUser}
