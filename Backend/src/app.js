@@ -46,16 +46,17 @@ app.get("/api", (req, res) => {
 });
 
 
-// Serve React build ONLY if it exists
-const frontendPath = path.join(__dirname, "../../frontend/dist");
+/* Serve React build */
+const publicPath = path.join(__dirname, "../public");
 
-app.use(express.static(frontendPath));
+app.use(express.static(publicPath));
+
 
 
 // React fallback
-app.get("*", (req, res) => {
+app.get("/{*splat}", (req, res) => {
   res.sendFile(
-    path.join(frontendPath, "index.html")
+    path.join(publicPath, "index.html")
   );
 });
 
