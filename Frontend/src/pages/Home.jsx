@@ -14,7 +14,7 @@ import {
   setCurrentChat, setMessages, addMessage, editMessage, removeMessage, updateChatTitle,
 } from '../store/chatSlice'
 
-const API = 'http://localhost:3000/api'
+const API = 'https://echomind-x5n4.onrender.com//api'
 
 export default function Home() {
   const navigate = useNavigate()

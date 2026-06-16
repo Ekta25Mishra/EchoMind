@@ -16,6 +16,13 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser())
 
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "EchoMind Backend is running 🚀"
+  });
+});
+
 /*using routes*/
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes)

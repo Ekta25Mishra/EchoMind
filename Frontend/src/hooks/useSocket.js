@@ -8,7 +8,7 @@ export default function useSocket(onAiResponse) {
   useEffect(() => { callbackRef.current = onAiResponse }, [onAiResponse])
 
   useEffect(() => {
-    const socket = io('http://localhost:3000', { withCredentials: true })
+    const socket = io('https://echomind-x5n4.onrender.com/', { withCredentials: true })
     socketRef.current = socket
 
     socket.on('ai-response', (...args) => callbackRef.current(...args))
