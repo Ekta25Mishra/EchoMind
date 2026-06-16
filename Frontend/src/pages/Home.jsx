@@ -20,7 +20,14 @@ export default function Home() {
   const navigate = useNavigate()
   const { user, loadingUser, logout } = useUser(() => navigate('/login'))
   const dispatch = useDispatch()
-  const { chats, currentChat, messages } = useSelector(s => s.chat)
+
+ /*  const { chats, currentChat, messages } = useSelector(s => s.chat) */
+
+ const { 
+  chats = [], 
+  currentChat = null, 
+  messages = [] 
+} = useSelector(s => s.chat || {})
 
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -38,7 +45,7 @@ export default function Home() {
     setSidebarOpen(false)
     try {
       const { data } = await axios.get(`${API}/chat/${id}/messages`, { withCredentials: true })
-      dispatch(setMessages(data.messages))
+      dispatch(setMessages(data?.messages || []))
     } catch {
       dispatch(setMessages([]))
     }

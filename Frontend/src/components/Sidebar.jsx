@@ -10,7 +10,7 @@ export default function Sidebar({ chats, activeChatId, sidebarOpen, onNewChat, o
 /*   const pinned = chats.filter(c => c.pinned)
   const recent = chats.filter(c => !c.pinned) */
 
-  const safeChats = chats || []
+  const safeChats = Array.isArray(chats) ? chats : []
 
 const pinned = safeChats.filter(c => c.pinned)
 const recent = safeChats.filter(c => !c.pinned)
