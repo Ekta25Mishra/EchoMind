@@ -3,60 +3,61 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
 
-/* Routes */
 const authRoutes = require("./routes/auth.routes");
 const chatRoutes = require("./routes/chat.routes");
 
 const app = express();
 
 
-const ALLOWED_ORIGINS = [
-  process.env.FRONTEND_URL,
-  "http://localhost:5173",
-  "http://localhost:3000",
-].filter(Boolean);
+const publicPath = path.join(__dirname, "../public");
 
+console.log("PUBLIC PATH:", publicPath);
 
+// CORS
 app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-      return cb(null, true);
-    }
-
-    cb(new Error(`CORS blocked: ${origin}`));
-  },
+  origin: [
+    "http://localhost:5173",
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
   credentials: true
 }));
 
 
+// middlewares
 app.use(express.json());
 app.use(cookieParser());
 
 
-// API routes first
+// API
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 
 
-// Backend health route
-app.get("/api", (req, res) => {
+// test
+app.get("/api", (req,res)=>{
   res.json({
-    message: "EchoMind Backend is running 🚀"
+    message:"EchoMind API running"
   });
 });
 
 
-/* Serve React build */
-const publicPath = path.join(__dirname, "../public");
+// IMPORTANT: serve assets first
+app.use(
+  "/assets",
+  express.static(path.join(publicPath, "assets"))
+);
 
-app.use(express.static(publicPath));
 
+// serve all frontend files
+app.use(
+  express.static(publicPath)
+);
 
 
 // React fallback
-app.get("/{*splat}", (req, res) => {
+app.get("/{*splat}", (req,res)=>{
   res.sendFile(
-    path.join(publicPath, "index.html")
+    path.join(publicPath,"index.html")
   );
 });
 
