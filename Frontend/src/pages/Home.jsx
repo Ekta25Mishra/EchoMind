@@ -14,7 +14,7 @@ import {
   setCurrentChat, setMessages, addMessage, editMessage, removeMessage, updateChatTitle,
 } from '../store/chatSlice'
 
-const API = (import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api'
+const API = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '') + '/api'
 
 export default function Home() {
   const navigate = useNavigate()
