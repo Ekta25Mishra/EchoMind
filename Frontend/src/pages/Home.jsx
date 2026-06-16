@@ -11,7 +11,7 @@ import useUser from '../hooks/useUser'
 import useSocket from '../hooks/useSocket'
 import {
   addChat, removeChat, togglePin,
-  setCurrentChat, setMessages, addMessage, editMessage,
+  setCurrentChat, setMessages, addMessage, editMessage, removeMessage, updateChatTitle,
 } from '../store/chatSlice'
 
 const API = 'http://localhost:3000/api'
@@ -44,7 +44,8 @@ export default function Home() {
     }
   }
 
-  const deleteChat = (id) => {
+  const deleteChat = async (id) => {
+    await axios.delete(`${API}/chat/${id}`, { withCredentials: true }).catch(() => {})
     dispatch(removeChat(id))
   }
 
@@ -54,6 +55,18 @@ export default function Home() {
 
   const handleEditMessage = (msgId, newText) => {
     dispatch(editMessage({ id: msgId, text: newText }))
+  }
+
+  const handleDeleteMessage = async (msgId) => {
+    if (!currentChat?.id) return
+    await axios.delete(`${API}/chat/${currentChat.id}/message/${msgId}`, { withCredentials: true }).catch(() => {})
+    dispatch(removeMessage(msgId))
+  }
+
+  const handleUpdateTitle = async (newTitle) => {
+    if (!currentChat?.id || !newTitle.trim()) return
+    const { data } = await axios.patch(`${API}/chat/${currentChat.id}`, { title: newTitle.trim() }, { withCredentials: true })
+    dispatch(updateChatTitle({ id: currentChat.id, title: data.chat.title }))
   }
 
   const onAiResponse = useCallback(({ content }) => {
@@ -107,8 +120,12 @@ export default function Home() {
       </aside>
 
       <main className="chat-main">
-        <ChatHeader title={currentChat?.title ?? 'New Chat'} onOpenSidebar={() => setSidebarOpen(true)} />
-        <MessageList messages={messages} loading={loading} onEditMessage={handleEditMessage} />
+        <ChatHeader
+          title={currentChat?.title ?? 'New Chat'}
+          onOpenSidebar={() => setSidebarOpen(true)}
+          onUpdateTitle={currentChat ? handleUpdateTitle : null}
+        />
+        <MessageList messages={messages} loading={loading} onEditMessage={handleEditMessage} onDeleteMessage={handleDeleteMessage} />
         <ChatInputBar
           input={input}
           onChange={e => setInput(e.target.value)}

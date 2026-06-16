@@ -78,7 +78,7 @@ function initSocketServer(httpServer) {
           .lean(),
       ]);
 
-      const stm = chatHistory.map(item => {
+      const stm = chatHistory.reverse().map(item => {
         return {
           role: item.role,
           parts: [{ text: item.content }],

@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import { useTheme, COLOR_THEMES } from '../context/ThemeContext'
 import './styles/Sidebar.css'
 
 export default function Sidebar({ chats, activeChatId, sidebarOpen, onNewChat, onLoadChat, onClose, onDeleteChat, onPinChat, onAccountOpen }) {
   const [hoveredId, setHoveredId] = useState(null)
+  const [themeOpen, setThemeOpen] = useState(false)
+  const { dark, toggle, colorTheme, changeColorTheme } = useTheme()
 
   const pinned = chats.filter(c => c.pinned)
   const recent = chats.filter(c => !c.pinned)
@@ -66,6 +69,39 @@ export default function Sidebar({ chats, activeChatId, sidebarOpen, onNewChat, o
       </nav>
 
       <div className="sidebar-footer">
+        <button className="sidebar-footer-btn" onClick={() => setThemeOpen(o => !o)}>
+          <span>🎨</span>
+          <span>Theme</span>
+          <span className="sidebar-footer-btn-arrow">{themeOpen ? '▾' : '▸'}</span>
+        </button>
+
+        {themeOpen && (
+          <div className="theme-picker">
+            <div className="theme-picker-row">
+              <span className="theme-picker-label">Mode</span>
+              <button className="theme-mode-btn" onClick={toggle}>
+                {dark ? '☀️ Light' : '🌙 Dark'}
+              </button>
+            </div>
+            <div className="theme-picker-swatches">
+              {COLOR_THEMES.map(t => (
+                <button
+                  key={t.id}
+                  className={`theme-swatch${colorTheme === t.id ? ' theme-swatch--active' : ''}`}
+                  onClick={() => changeColorTheme(t.id)}
+                  title={t.label}
+                >
+                  <span className="theme-swatch-dot" style={t.id === 'default'
+                    ? { background: 'var(--accent)' }
+                    : { background: dark ? t.dark?.['--accent'] : t.light?.['--accent'] }
+                  } />
+                  <span>{t.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <button className="user-profile-btn" onClick={onAccountOpen}>
           <div className="avatar">👤</div>
           <span>My Account</span>

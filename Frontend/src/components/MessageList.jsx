@@ -54,7 +54,7 @@ function CopyButton({ text }) {
   )
 }
 
-function MessageItem({ msg, onEdit }) {
+function MessageItem({ msg, onEdit, onDelete }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(msg.text)
   const textareaRef = useRef(null)
@@ -122,6 +122,14 @@ function MessageItem({ msg, onEdit }) {
                   ✏️
                 </button>
               )}
+              <button
+                className="msg-action-btn msg-action-btn--delete"
+                onClick={() => onDelete(msg.id)}
+                title="Delete"
+                aria-label="Delete message"
+              >
+                🗑️
+              </button>
             </div>
           )}
         </div>
@@ -130,7 +138,7 @@ function MessageItem({ msg, onEdit }) {
   )
 }
 
-export default function MessageList({ messages, loading, onEditMessage }) {
+export default function MessageList({ messages, loading, onEditMessage, onDeleteMessage }) {
   const bottomRef = useRef(null)
 
   useEffect(() => {
@@ -159,6 +167,7 @@ export default function MessageList({ messages, loading, onEditMessage }) {
             key={item.msg.id}
             msg={item.msg}
             onEdit={onEditMessage}
+            onDelete={onDeleteMessage}
           />
         )
       )}

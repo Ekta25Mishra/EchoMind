@@ -39,12 +39,20 @@ const chatSlice = createSlice({
       const msg = state.messages.find(m => m.id === id)
       if (msg) msg.text = text
     },
+    removeMessage(state, { payload: id }) {
+      state.messages = state.messages.filter(m => m.id !== id)
+    },
+    updateChatTitle(state, { payload: { id, title } }) {
+      const chat = state.chats.find(c => c.id === id)
+      if (chat) chat.title = title
+      if (state.currentChat?.id === id) state.currentChat.title = title
+    },
   },
 })
 
 export const {
   setChats, addChat, removeChat, togglePin,
-  setCurrentChat, setMessages, addMessage, editMessage,
+  setCurrentChat, setMessages, addMessage, editMessage, removeMessage, updateChatTitle,
 } = chatSlice.actions
 
 export default chatSlice.reducer
