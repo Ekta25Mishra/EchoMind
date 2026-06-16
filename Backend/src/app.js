@@ -10,8 +10,18 @@ const chatRoutes=require("./routes/chat.routes")
 const app=express();
 
 /*using middlewares*/
+const ALLOWED_ORIGINS = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+  "http://localhost:3000",
+].filter(Boolean)
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: (origin, cb) => {
+    // allow server-to-server / curl requests (no origin header)
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true)
+    cb(new Error(`CORS blocked: ${origin}`))
+  },
   credentials: true
 }));
 app.use(express.json());

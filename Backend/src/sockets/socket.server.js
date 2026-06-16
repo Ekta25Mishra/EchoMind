@@ -7,9 +7,18 @@ const messageModel = require("../models/message.model");
 const { createMemory, queryMemory } = require("../services/vector.service");
 
 function initSocketServer(httpServer) {
+  const ALLOWED_ORIGINS = [
+    process.env.FRONTEND_URL,
+    "http://localhost:5173",
+    "http://localhost:3000",
+  ].filter(Boolean)
+
   const io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: (origin, cb) => {
+        if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true)
+        cb(new Error(`CORS blocked: ${origin}`))
+      },
       credentials: true
     }
   });
@@ -78,22 +87,18 @@ function initSocketServer(httpServer) {
           .lean(),
       ]);
 
-      const stm = chatHistory.reverse().map(item => {
-        return {
-          role: item.role,
-          parts: [{ text: item.content }],
-        };
-      });
+      const stm = (chatHistory ?? []).reverse().map(item => ({
+        role: item.role,
+        parts: [{ text: item.content }],
+      }));
 
       const ltm = [
         {
           role: "user",
           parts: [
             {
-              text: `
-              these are some previous messages from the chat, use them to generate a response
-              ${memory.map((item) => item.metadata.text).join("\n")}
-              `,
+              text: `these are some previous messages from the chat, use them to generate a response
+              ${(memory ?? []).map((item) => item.metadata?.text ?? "").join("\n")}`,
             },
           ],
         },

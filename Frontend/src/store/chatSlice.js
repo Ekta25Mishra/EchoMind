@@ -9,12 +9,13 @@ const chatSlice = createSlice({
   },
   reducers: {
     setChats(state, { payload }) {
-      state.chats = payload
+      state.chats = Array.isArray(payload) ? payload : []
     },
     addChat(state, { payload }) {
-      state.chats.unshift(payload)
+      if (payload) state.chats.unshift(payload)
     },
     removeChat(state, { payload: id }) {
+      if (!id) return
       state.chats = state.chats.filter(c => c.id !== id)
       if (state.currentChat?.id === id) {
         state.currentChat = null
@@ -22,30 +23,34 @@ const chatSlice = createSlice({
       }
     },
     togglePin(state, { payload: id }) {
+      if (!id) return
       const chat = state.chats.find(c => c.id === id)
       if (chat) chat.pinned = !chat.pinned
     },
     setCurrentChat(state, { payload }) {
-      state.currentChat = payload   // pass full chat object or null
+      state.currentChat = payload ?? null
       state.messages = []
     },
     setMessages(state, { payload }) {
-      state.messages = payload
+      state.messages = Array.isArray(payload) ? payload : []
     },
     addMessage(state, { payload }) {
-      state.messages.push(payload)
+      if (payload) state.messages.push(payload)
     },
-    editMessage(state, { payload: { id, text } }) {
-      const msg = state.messages.find(m => m.id === id)
-      if (msg) msg.text = text
+    editMessage(state, { payload }) {
+      if (!payload?.id) return
+      const msg = state.messages.find(m => m.id === payload.id)
+      if (msg) msg.text = payload.text
     },
     removeMessage(state, { payload: id }) {
+      if (!id) return
       state.messages = state.messages.filter(m => m.id !== id)
     },
-    updateChatTitle(state, { payload: { id, title } }) {
-      const chat = state.chats.find(c => c.id === id)
-      if (chat) chat.title = title
-      if (state.currentChat?.id === id) state.currentChat.title = title
+    updateChatTitle(state, { payload }) {
+      if (!payload?.id || !payload?.title) return
+      const chat = state.chats.find(c => c.id === payload.id)
+      if (chat) chat.title = payload.title
+      if (state.currentChat?.id === payload.id) state.currentChat.title = payload.title
     },
   },
 })

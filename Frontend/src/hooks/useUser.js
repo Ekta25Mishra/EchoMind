@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import { setChats } from '../store/chatSlice'
 
-const API = 'https://echomind-x5n4.onrender.com//api'
+const API = (import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api'
 
 export default function useUser(onUnauthenticated) {
   const [user, setUser] = useState(null)

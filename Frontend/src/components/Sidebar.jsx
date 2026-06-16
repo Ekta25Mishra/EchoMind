@@ -7,8 +7,13 @@ export default function Sidebar({ chats, activeChatId, sidebarOpen, onNewChat, o
   const [themeOpen, setThemeOpen] = useState(false)
   const { dark, toggle, colorTheme, changeColorTheme } = useTheme()
 
-  const pinned = chats.filter(c => c.pinned)
-  const recent = chats.filter(c => !c.pinned)
+/*   const pinned = chats.filter(c => c.pinned)
+  const recent = chats.filter(c => !c.pinned) */
+
+  const safeChats = chats || []
+
+const pinned = safeChats.filter(c => c.pinned)
+const recent = safeChats.filter(c => !c.pinned)
 
   const ChatItem = ({ c }) => (
     <div
