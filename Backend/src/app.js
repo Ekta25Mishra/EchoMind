@@ -11,7 +11,6 @@ const app = express();
 
 const publicPath = path.join(__dirname, "../public");
 
-console.log("PUBLIC PATH:", publicPath);
 
 // CORS
 app.use(cors({
@@ -54,8 +53,14 @@ app.use(
 );
 
 
-// React fallback
-app.get("/{*splat}", (req,res)=>{
+// fallback only for frontend routes
+app.get("/{*splat}", (req,res,next)=>{
+
+  // do not hijack api calls
+  if(req.path.startsWith("/api")){
+    return next();
+  }
+
   res.sendFile(
     path.join(publicPath,"index.html")
   );
