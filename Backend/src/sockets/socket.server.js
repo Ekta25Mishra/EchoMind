@@ -11,13 +11,16 @@ function initSocketServer(httpServer) {
     process.env.FRONTEND_URL,
     "http://localhost:5173",
     "http://localhost:3000",
+    "https://echo-mind-one.vercel.app"
   ].filter(Boolean)
 
   const io = new Server(httpServer, {
     cors: {
       origin: (origin, cb) => {
+         console.log("Socket origin:", origin);
+
         if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true)
-        cb(new Error(`CORS blocked: ${origin}`))
+        return cb(new Error(`CORS blocked: ${origin}`))
       },
       credentials: true
     }
@@ -35,7 +38,7 @@ function initSocketServer(httpServer) {
 
       const user = await userModel.findById(decoded.id);
 
-      socket.user = decoded;
+      socket.user = user;
 
       next();
     } catch (err) {
