@@ -44,7 +44,7 @@ export default function Register() {
   */
     axios
       .post(
-        "https://echomind-x5n4.onrender.com//api/auth/register",
+        "https://echomind-x5n4.onrender.com/api/auth/register",
         {
           email: form.email,
           fullName: {

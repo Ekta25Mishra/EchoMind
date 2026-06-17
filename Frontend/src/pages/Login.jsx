@@ -38,7 +38,7 @@ export default function Login() {
     setTimeout(() => navigate('/'), 1500) */
 
     axios.post(
-      "https://echomind-x5n4.onrender.com//api/auth/login",
+      "https://echomind-x5n4.onrender.com/api/auth/login",
       {
         email: form.email,
         password: form.password,
