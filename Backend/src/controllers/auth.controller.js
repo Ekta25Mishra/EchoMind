@@ -1,84 +1,104 @@
-const userModel=require("../models/user.model")
+const userModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
-const jwt=require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
-async function registerUser(req,res){
+async function registerUser(req, res) {
   try {
-    const {fullName: {firstName, lastName}, email, password}= req.body;
+    const {
+      fullName: { firstName, lastName },
+      email,
+      password,
+    } = req.body;
 
-    const isUserAlreadyExists = await userModel.findOne({email});
+    const isUserAlreadyExists = await userModel.findOne({ email });
 
-    if(isUserAlreadyExists){
+    if (isUserAlreadyExists) {
       return res.status(400).json({
-        message:"User already exists."
-      })
+        message: "User already exists.",
+      });
     }
 
-    const hashPassword = await bcrypt.hash(password,10);
+    const hashPassword = await bcrypt.hash(password, 10);
 
     const user = await userModel.create({
       fullName: {
-        firstName, lastName
+        firstName,
+        lastName,
       },
-      email, 
-      password: hashPassword
-    })
-    
-    const token = jwt.sign({id:user._id}, process.env.JWT_SECRET)
+      email,
+      password: hashPassword,
+    });
 
-    res.cookie("token", token);
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
+    /*     res.cookie("token", token);
+     */
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     res.status(201).json({
-      message:"User registered successfully",
+      message: "User registered successfully",
       user: {
         email: user.email,
         _id: user._id,
-        fullName: user.fullName
-      }
-    })
-  } catch(err) {
-    res.status(500).json({ message: "Internal server error" })
+        fullName: user.fullName,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
   }
 }
 
-async function loginUser(req,res){
+async function loginUser(req, res) {
   try {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" })
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
-    const user = await userModel.findOne({email}).select("+password");
+    const user = await userModel.findOne({ email }).select("+password");
 
-    if(!user){
+    if (!user) {
       return res.status(400).json({
-        message:"Invalid email or password!"
-      })
+        message: "Invalid email or password!",
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if(!isPasswordValid){
+    if (!isPasswordValid) {
       return res.status(400).json({
-        message:"Invalid email or password!"
-      })
+        message: "Invalid email or password!",
+      });
     }
 
-    const token = jwt.sign({id:user._id}, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-    res.cookie("token", token);
+    /* res.cookie("token", token); */
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
-      message:"User logged in successfully",
+      message: "User logged in successfully",
       user: {
         email: user.email,
         _id: user._id,
-        fullName: user.fullName 
-      }
-    })
-  } catch(err) {
-    res.status(500).json({ message: "Internal server error" })
+        fullName: user.fullName,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
   }
 }
 
@@ -87,14 +107,20 @@ async function getMe(req, res) {
     user: {
       email: req.user.email,
       _id: req.user._id,
-      fullName: req.user.fullName
-    }
-  })
+      fullName: req.user.fullName,
+    },
+  });
 }
 
 async function logoutUser(req, res) {
-  res.clearCookie("token");
-  res.status(200).json({ message: "Logged out successfully" })
+  /*   res.clearCookie("token");
+   */
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+  return res.status(200).json({ message: "Logged out successfully" });
 }
 
-module.exports= {registerUser, loginUser, getMe, logoutUser}
+module.exports = { registerUser, loginUser, getMe, logoutUser };

@@ -9,8 +9,6 @@ const chatRoutes = require("./routes/chat.routes");
 const app = express();
 
 
-/* const publicPath = path.join(__dirname, "../public");
- */
 
 // CORS
 app.use(cors({
@@ -27,6 +25,9 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(express.urlencoded({
+ extended:true
+}));
 
 // API
 app.use("/api/auth", authRoutes);
@@ -39,33 +40,8 @@ app.get("/api", (req,res)=>{
     message:"EchoMind API running"
   });
 });
-/* 
-
-// IMPORTANT: serve assets first
-app.use(
-  "/assets",
-  express.static(path.join(publicPath, "assets"))
-);
 
 
-// serve all frontend files
-app.use(
-  express.static(publicPath)
-);
 
-
-// fallback only for frontend routes
-app.get("/{*splat}", (req,res,next)=>{
-
-  // do not hijack api calls
-  if(req.path.startsWith("/api")){
-    return next();
-  }
-
-  res.sendFile(
-    path.join(publicPath,"index.html")
-  );
-});
- */
 
 module.exports = app;
