@@ -39,18 +39,13 @@ export default function Login() {
 
     axios.post(
       "https://echomind-x5n4.onrender.com/api/auth/login",
-      {
-        email: form.email,
-        password: form.password,
-      },
-      {
-        withCredentials: true,
-      },
-    ).then((res) => {
-      console.log(res);
+      { email: form.email, password: form.password },
+      { withCredentials: true }
+    ).then(() => {
       navigate("/");
     }).catch((err) => {
-      console.log(err); 
+      const msg = err.response?.data?.message || "Login failed. Please try again.";
+      setBanner({ type: "error", msg });
     }).finally(() => {
       setLoading(false);
     });
