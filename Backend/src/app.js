@@ -15,9 +15,10 @@ const app = express();
 // CORS
 app.use(cors({
   origin: [
+    "https://echo-mind-one.vercel.app",
     "http://localhost:5173",
     process.env.FRONTEND_URL
-  ].filter(Boolean),
+  ],
   credentials: true
 }));
 
