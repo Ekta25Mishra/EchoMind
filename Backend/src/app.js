@@ -9,8 +9,8 @@ const chatRoutes = require("./routes/chat.routes");
 const app = express();
 
 
-const publicPath = path.join(__dirname, "../public");
-
+/* const publicPath = path.join(__dirname, "../public");
+ */
 
 // CORS
 app.use(cors({
@@ -38,7 +38,7 @@ app.get("/api", (req,res)=>{
     message:"EchoMind API running"
   });
 });
-
+/* 
 
 // IMPORTANT: serve assets first
 app.use(
@@ -65,6 +65,6 @@ app.get("/{*splat}", (req,res,next)=>{
     path.join(publicPath,"index.html")
   );
 });
-
+ */
 
 module.exports = app;
