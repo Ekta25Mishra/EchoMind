@@ -82,7 +82,6 @@ EchoMind is an AI-powered conversational assistant that delivers intelligent, co
 **Ekta Mishra**
 
 - GitHub: https://github.com/Ekta25Mishra
-- LinkedIn: *(Add your LinkedIn URL)*
 
 ---
 
